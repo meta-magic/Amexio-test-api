@@ -57,7 +57,8 @@ deploy:
   file: dist/*
   skip_cleanup: true
   on:
+    repo:meta-magic/amexio-api-website-test
     tags: true  
-
+    all_branches: true
 cache:
   yarn: true
