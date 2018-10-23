@@ -43,6 +43,7 @@ script:
   - npm install --save uglifyjs-webpack-plugin
   - npm install @angular-devkit/core --save
   - npm i node-sass --save-dev
+  - npm i  ../d3.amexio.github.io/amexio-chart-d3.tgz
   - ng set defaults.styleExt scss
   - ng build --prod 
   
