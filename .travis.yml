@@ -1,0 +1,62 @@
+sudo: required
+dist: trusty
+
+#install google chrome, using addons
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+  sonarcloud:
+    organization: "deepali-arvind-github" # the key of the org you chose at step #3
+    token:
+      secure: 081e2012239f75d61242a6d1d6605f0ee29dc019 # encrypted value of your token   
+ 
+language: node_js
+node_js:
+  - "8"
+env:
+ global:
+    - OCTOKIT_API_ENDPOINT=https://github.com/meta-magic/amexio-api-website-test/tree/master/api/v5.3
+before_script:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - npm install --global gulp --save
+  - gem install sass
+  - git fetch --unshallow
+  - git clone https://github.com/meta-magic/Amexio5API.git -b v5.2
+  - git clone https://github.com/meta-magic/d3.amexio.github.io.git 
+  - cd d3.amexio.github.io/
+  - npm install
+  - npm install d3@^5.7.0
+  - ng build --prod amexio-chart-d3
+  - npm pack dist/amexio-chart-d3/
+  - mv amexio-chart-d3-*.tgz amexio-chart-d3.tgz
+
+
+            
+script: 
+  - cd ../Amexio5API/ 
+  - npm install
+  - npm install --save uglifyjs-webpack-plugin
+  - npm install @angular-devkit/core --save
+  - npm i node-sass --save-dev
+  - ng set defaults.styleExt scss
+  - ng build --prod 
+  
+after_success: 
+  - codecov
+
+deploy:
+  provider: releases
+  api_key: 713daa22c3e52188586e59d31cb4b09991687948
+  file_glob: true
+  file: dist/*
+  skip_cleanup: true
+  on:
+    tags: true  
+
+cache:
+  yarn: true
